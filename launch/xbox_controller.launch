@@ -17,6 +17,8 @@
     <arg name="yawrate_max" default="180"/>
 
     <arg name="initial_z_cmd" default="0"/>
+    <arg name="min_z_cmd" default="-10.0"/>
+    <arg name="max_z_cmd" default="10.0"/>
 
     <node name="reef_teleop" pkg="reef_teleop" type="reef_teleop" output="screen">
         <rosparam subst_value="true">
@@ -29,6 +31,8 @@
             yaw_axis: 1
 
             initial_z_cmd: $(arg initial_z_cmd)
+            min_z_cmd: $(arg min_z_cmd)
+            max_z_cmd: $(arg max_z_cmd)
 
             pitch_max: $(arg pitch_max)
             roll_max: $(arg roll_max)

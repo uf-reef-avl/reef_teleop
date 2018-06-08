@@ -29,7 +29,7 @@ namespace reef_teleop {
             Axis yaw;
         } axes;
 
-        double zCommand;
+        double zCommand, zCommandMin, zCommandMax;
 
     public:
         Teleop();

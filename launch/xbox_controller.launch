@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<launch>
+    <arg name="joy_dev" default="/dev/input/js0" />
+
+    <node name="joy" pkg="joy" type="joy_node" output="screen" >
+        <param name="dev" value="$(arg joy_dev)" />
+        <param name="autorepeat_rate" value="100" />
+        <param name="coalesce_interval" value="0.01" />
+    </node>
+
+    <arg name="control_mode" default="attitude_altitude_hold"/>
+
+    <arg name="thrust_max" default="25"/>
+    <arg name="pitch_max" default="15"/>
+    <arg name="roll_max" default="15"/>
+    <arg name="yawrate_max" default="180"/>
+
+    <arg name="initial_z_cmd" default="0"/>
+
+    <node name="reef_teleop" pkg="reef_teleop" type="reef_teleop" output="screen">
+        <rosparam subst_value="true">
+            control_mode: $(arg control_mode)
+
+            x_axis: 4
+            y_axis: 5
+            z_axis: 2
+            thrust_axis: 2
+            yaw_axis: 1
+
+            initial_z_cmd: $(arg initial_z_cmd)
+
+            pitch_max: $(arg pitch_max)
+            roll_max: $(arg roll_max)
+            thrust_max: $(arg thrust_max)
+        </rosparam>
+    </node>
+</launch>

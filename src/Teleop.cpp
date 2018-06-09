@@ -14,7 +14,7 @@ namespace reef_teleop {
         private_nh_.param<int>("yaw_axis", axes.yaw.axis, 1);
 
         //Limit parameters
-        private_nh_.param<double>("yaw_velocity_max", axes.yaw.max, 90.0);
+        private_nh_.param<double>("yawrate_max", axes.yaw.max, 0.5);
         private_nh_.param<double>("pitch_max", axes.x.max, 20.0);
         private_nh_.param<double>("roll_max", axes.y.max, 20.0);
 

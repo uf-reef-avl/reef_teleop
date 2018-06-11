@@ -19,6 +19,7 @@
     <arg name="initial_z_cmd" default="0"/>
     <arg name="min_z_cmd" default="-10.0"/>
     <arg name="max_z_cmd" default="10.0"/>
+    <arg name="z_scale" default="0.1"/>
 
     <node name="reef_teleop" pkg="reef_teleop" type="reef_teleop" output="screen">
         <rosparam subst_value="true">
@@ -33,6 +34,7 @@
             initial_z_cmd: $(arg initial_z_cmd)
             min_z_cmd: $(arg min_z_cmd)
             max_z_cmd: $(arg max_z_cmd)
+            z_scale: $(arg z_scale)
 
             pitch_max: $(arg pitch_max)
             roll_max: $(arg roll_max)

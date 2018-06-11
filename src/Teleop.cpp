@@ -21,6 +21,7 @@ namespace reef_teleop {
         private_nh_.param<double>("initial_z_cmd", zCommand, 0);
         private_nh_.param<double>("min_z_command", zCommandMin, -10.0);
         private_nh_.param<double>("max_z_command", zCommandMax, 10.0);
+        private_nh_.param<double>("z_scale", zScale, 0.1);
 
         //Control mode parameter
         std::string control_mode;
@@ -52,7 +53,7 @@ namespace reef_teleop {
         attitude_publisher_.publish(attCmd);
 
         //Populate and publish altitude command
-        zCommand -= getAxis(joy, axes.z);
+        zCommand -= zScale*getAxis(joy, axes.z);
         if (zCommand < zCommandMin) {
             zCommand = zCommandMin;
         } else if (zCommand > zCommandMax) {

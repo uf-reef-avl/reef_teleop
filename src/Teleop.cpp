@@ -18,7 +18,7 @@ namespace reef_teleop {
         private_nh_.param<double>("pitch_max", axes.x.max, 20.0);
         private_nh_.param<double>("roll_max", axes.y.max, 20.0);
 
-        private_nh_.param<double>("initial_z_command", zCommand, 0);
+        private_nh_.param<double>("initial_z_cmd", zCommand, 0);
         private_nh_.param<double>("min_z_command", zCommandMin, -10.0);
         private_nh_.param<double>("max_z_command", zCommandMax, 10.0);
 

@@ -15,6 +15,7 @@ add_message_files(
     FILES
     AltitudeCommand.msg
     AttitudeCommand.msg
+    VelocityCommand.msg
 )
 
 generate_messages(

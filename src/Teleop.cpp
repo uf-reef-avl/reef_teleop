@@ -1,5 +1,6 @@
 #include <reef_teleop/AttitudeCommand.h>
 #include <reef_teleop/AltitudeCommand.h>
+#include <reef_teleop/VelocityCommand.h>
 
 #include "Teleop.h"
 
@@ -13,11 +14,6 @@ namespace reef_teleop {
         private_nh_.param<int>("thrust_axis", axes.thrust.axis, 2);
         private_nh_.param<int>("yaw_axis", axes.yaw.axis, 1);
 
-        //Limit parameters
-        private_nh_.param<double>("yawrate_max", axes.yaw.max, 0.5);
-        private_nh_.param<double>("pitch_max", axes.x.max, 20.0);
-        private_nh_.param<double>("roll_max", axes.y.max, 20.0);
-
         private_nh_.param<double>("initial_z_cmd", zCommand, 0);
         private_nh_.param<double>("min_z_command", zCommandMin, -10.0);
         private_nh_.param<double>("max_z_command", zCommandMax, 10.0);
@@ -29,9 +25,28 @@ namespace reef_teleop {
 
         if (control_mode == "attitude_altitude_hold") {
             ROS_INFO_STREAM("Attitude + Altitude Hold Mode Enabled");
-            joy_subscriber_ = node_handle_.subscribe<sensor_msgs::Joy>("joy", 10, boost::bind(&Teleop::joyAttAltCallback, this, _1));
             
+            //Limit parameters
+            private_nh_.param<double>("yawrate_max", axes.yaw.max, 0.5);
+            private_nh_.param<double>("pitch_max", axes.x.max, 20.0);
+            private_nh_.param<double>("roll_max", axes.y.max, 20.0);
+
+            joy_subscriber_ = node_handle_.subscribe<sensor_msgs::Joy>("joy", 10, boost::bind(&Teleop::joyAttAltCallback, this, _1));
             attitude_publisher_ = node_handle_.advertise<AttitudeCommand>("/teleop_command/attitude", 10);
+            altitude_publisher_ = node_handle_.advertise<AltitudeCommand>("/teleop_command/altitude", 10);
+
+            //Set zmax (speed at which position changes)
+            axes.z.max = 0.05;
+        } else if (control_mode == "velocity") {
+            ROS_INFO_STREAM("Velocity Control Mode Enabled");
+
+            //Limit parameters
+            private_nh_.param<double>("x_dot_max", axes.x.max, 0.25);
+            private_nh_.param<double>("y_dot_max", axes.y.max, 0.25);
+            private_nh_.param<double>("yawrate_max", axes.yaw.max, 0.5);
+
+            joy_subscriber_ = node_handle_.subscribe<sensor_msgs::Joy>("joy", 10, boost::bind(&Teleop::joyVelAltCallback, this, _1));
+            velocity_publisher_ = node_handle_.advertise<VelocityCommand>("/teleop_command/velocity", 10);
             altitude_publisher_ = node_handle_.advertise<AltitudeCommand>("/teleop_command/altitude", 10);
 
             //Set zmax (speed at which position changes)
@@ -51,6 +66,28 @@ namespace reef_teleop {
         attCmd.pitch = -1.0*getAxis(joy, axes.y);
         attCmd.yaw_rate = -1.0*getAxis(joy, axes.yaw);
         attitude_publisher_.publish(attCmd);
+
+        //Populate and publish altitude command
+        zCommand -= zScale*getAxis(joy, axes.z);
+        if (zCommand < zCommandMin) {
+            zCommand = zCommandMin;
+        } else if (zCommand > zCommandMax) {
+            zCommand = zCommandMax;
+        }
+        altCmd.z = zCommand;
+        altitude_publisher_.publish(altCmd);
+    }
+
+    void Teleop::joyVelAltCallback(const sensor_msgs::JoyConstPtr &joy) {
+        VelocityCommand velCmd;
+        AltitudeCommand altCmd;
+
+        //Populate and publish attitude command
+        velCmd.header.stamp = altCmd.header.stamp = ros::Time::now();
+        velCmd.y_dot = -1.0*getAxis(joy, axes.x);
+        velCmd.x_dot = getAxis(joy, axes.y);
+        velCmd.yaw_rate = -1.0*getAxis(joy, axes.yaw);
+        velocity_publisher_.publish(velCmd);
 
         //Populate and publish altitude command
         zCommand -= zScale*getAxis(joy, axes.z);

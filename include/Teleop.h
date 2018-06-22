@@ -19,7 +19,7 @@ namespace reef_teleop {
         ros::NodeHandle private_nh_;
         ros::NodeHandle node_handle_;
         ros::Subscriber joy_subscriber_;
-        ros::Publisher attitude_publisher_, altitude_publisher_;
+        ros::Publisher attitude_publisher_, altitude_publisher_, velocity_publisher_;
 
         struct {
             Axis x;
@@ -34,6 +34,7 @@ namespace reef_teleop {
     public:
         Teleop();
         void joyAttAltCallback(const sensor_msgs::JoyConstPtr &joy);
+        void joyVelAltCallback(const sensor_msgs::JoyConstPtr &joy);
     };
 
     double getAxis(const sensor_msgs::JoyConstPtr &joy, const Axis &axis);

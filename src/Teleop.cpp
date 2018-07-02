@@ -21,9 +21,9 @@ namespace reef_teleop {
 
         //Control mode parameter
         std::string control_mode;
-        private_nh_.param<std::string>("control_mode", control_mode, "attitude_altitude_hold");
+        private_nh_.param<std::string>("control_mode", control_mode, "attitude_altitude");
 
-        if (control_mode == "attitude_altitude_hold") {
+        if (control_mode == "attitude_altitude") {
             ROS_INFO_STREAM("Attitude + Altitude Hold Mode Enabled");
             
             //Limit parameters

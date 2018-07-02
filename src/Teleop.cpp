@@ -54,6 +54,14 @@ namespace reef_teleop {
         } else {
             ROS_ERROR_STREAM("Unsupported control mode: " << control_mode);
         }
+
+        ROS_INFO_STREAM("Teleop: Setting initial z to " << zCommand);
+
+        //Publish initial altitude
+        AltitudeCommand altCmd;
+        altCmd.header.stamp = ros::Time::now();
+        altCmd.z = zCommand;
+        altitude_publisher_.publish(altCmd);
     }
 
     void Teleop::joyAttAltCallback(const sensor_msgs::JoyConstPtr &joy) {

@@ -32,13 +32,13 @@ namespace reef_teleop {
             private_nh_.param<double>("roll_max", axes.y.max, 20.0);
 
             joy_subscriber_ = node_handle_.subscribe<sensor_msgs::Joy>("joy", 10, boost::bind(&Teleop::joyAttAltCallback, this, _1));
-            attitude_publisher_ = node_handle_.advertise<AttitudeCommand>("/teleop_command/attitude", 10);
-            altitude_publisher_ = node_handle_.advertise<AltitudeCommand>("/teleop_command/altitude", 10);
+            attitude_publisher_ = node_handle_.advertise<AttitudeCommand>("/teleop_command/attitude", 1);
+            altitude_publisher_ = node_handle_.advertise<AltitudeCommand>("/teleop_command/altitude", 1, true);
 
             //Set zmax (speed at which position changes)
             axes.z.max = 0.05;
-        } else if (control_mode == "velocity") {
-            ROS_INFO_STREAM("Velocity Control Mode Enabled");
+        } else if (control_mode == "velocity_altitude") {
+            ROS_INFO_STREAM("Velocity + Altitude Control Mode Enabled");
 
             //Limit parameters
             private_nh_.param<double>("x_dot_max", axes.x.max, 0.25);
@@ -46,8 +46,8 @@ namespace reef_teleop {
             private_nh_.param<double>("yawrate_max", axes.yaw.max, 0.5);
 
             joy_subscriber_ = node_handle_.subscribe<sensor_msgs::Joy>("joy", 10, boost::bind(&Teleop::joyVelAltCallback, this, _1));
-            velocity_publisher_ = node_handle_.advertise<VelocityCommand>("/teleop_command/velocity", 10);
-            altitude_publisher_ = node_handle_.advertise<AltitudeCommand>("/teleop_command/altitude", 10);
+            velocity_publisher_ = node_handle_.advertise<VelocityCommand>("/teleop_command/velocity", 1);
+            altitude_publisher_ = node_handle_.advertise<AltitudeCommand>("/teleop_command/altitude", 1, true);
 
             //Set zmax (speed at which position changes)
             axes.z.max = 0.05;

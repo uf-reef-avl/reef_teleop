@@ -16,6 +16,9 @@
     <arg name="roll_max" default="0.25"/>
     <arg name="yawrate_max" default="0.25"/>
 
+    <arg name="x_dot_max" default="0.25"/>
+    <arg name="y_dot_max" default="0.25"/>
+
     <arg name="initial_z_cmd" default="0"/>
     <arg name="min_z_cmd" default="-10.0"/>
     <arg name="max_z_cmd" default="10.0"/>
@@ -40,6 +43,9 @@
             roll_max: $(arg roll_max)
             thrust_max: $(arg thrust_max)
             yawrate_max: $(arg yawrate_max)
+
+            x_dot_max: $(arg x_dot_max)
+            y_dot_max: $(arg y_dot_max)
         </rosparam>
     </node>
 </launch>

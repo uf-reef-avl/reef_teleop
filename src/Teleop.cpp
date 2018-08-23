@@ -14,7 +14,6 @@ namespace reef_teleop {
         private_nh_.param<int>("thrust_axis", axes.thrust.axis, 2);
         private_nh_.param<int>("yaw_axis", axes.yaw.axis, 1);
 
-<<<<<<< HEAD
         private_nh_.param<int>("a_btn", buttons.a, 1);
         private_nh_.param<int>("b_btn", buttons.b, 2);
         private_nh_.param<int>("x_btn", buttons.x, 3);
@@ -27,13 +26,7 @@ namespace reef_teleop {
 
         private_nh_.param<bool>("invert_x", invertX, false);
 
-=======
-        private_nh_.param<double>("initial_z_cmd", zCommand, 0);
-        private_nh_.param<double>("min_z_command", zCommandMin, -10.0);
-        private_nh_.param<double>("max_z_command", zCommandMax, 10.0);
-        private_nh_.param<double>("z_scale", zScale, 0.1);
 
->>>>>>> d6e757694bff8059abeeb42c9ff1fb61b70d48a2
         //Control mode parameter
         std::string control_mode;
         private_nh_.param<std::string>("control_mode", control_mode, "attitude_altitude");
@@ -43,13 +36,9 @@ namespace reef_teleop {
             
             //Limit parameters
             private_nh_.param<double>("yawrate_max", axes.yaw.max, 0.5);
-<<<<<<< HEAD
             private_nh_.param<double>("pitch_max", axes.x.max, 0.15);
             private_nh_.param<double>("roll_max", axes.y.max, 0.15);
-=======
-            private_nh_.param<double>("pitch_max", axes.x.max, 20.0);
-            private_nh_.param<double>("roll_max", axes.y.max, 20.0);
->>>>>>> d6e757694bff8059abeeb42c9ff1fb61b70d48a2
+
 
             joy_subscriber_ = node_handle_.subscribe<sensor_msgs::Joy>("joy", 10, boost::bind(&Teleop::joyAttAltCallback, this, _1));
             attitude_publisher_ = node_handle_.advertise<AttitudeCommand>("/teleop_command/attitude", 1);
@@ -71,7 +60,6 @@ namespace reef_teleop {
 
             //Set zmax (speed at which position changes)
             axes.z.max = 0.05;
-<<<<<<< HEAD
         } else if (control_mode == "x_btn_attitude_altitude") {
             ROS_INFO_STREAM("X-button Attitude + Altitude Control Mode Enabled");
 
@@ -91,15 +79,8 @@ namespace reef_teleop {
 
             attitude_publisher_ = node_handle_.advertise<AttitudeCommand>("/teleop_command/attitude", 1);
             altitude_publisher_ = node_handle_.advertise<AltitudeCommand>("/teleop_command/altitude", 1, true);
-=======
->>>>>>> d6e757694bff8059abeeb42c9ff1fb61b70d48a2
-        } else {
-            ROS_ERROR_STREAM("Unsupported control mode: " << control_mode);
-        }
 
-        ROS_INFO_STREAM("Teleop: Setting initial z to " << zCommand);
 
-<<<<<<< HEAD
         if (control_mode.find("altitude") != std::string::npos) {
             //Publish initial altitude
             AltitudeCommand altCmd;
@@ -108,6 +89,8 @@ namespace reef_teleop {
             altitude_publisher_.publish(altCmd);
         }
     }
+    }
+
 
     void Teleop::rcRawCallback(const rosflight_msgs::RCRawConstPtr &msg) {
         if (rcSwitchFlipped && msg->values[rcChannel] <= 1500)
@@ -202,11 +185,7 @@ namespace reef_teleop {
         }
         attitude_publisher_.publish(attCmd);
 
-=======
-        //Publish initial altitude
-        AltitudeCommand altCmd;
-        altCmd.header.stamp = ros::Time::now();
->>>>>>> d6e757694bff8059abeeb42c9ff1fb61b70d48a2
+
         altCmd.z = zCommand;
         altitude_publisher_.publish(altCmd);
     }
@@ -217,7 +196,6 @@ namespace reef_teleop {
 
         //Populate and publish attitude command
         attCmd.header.stamp = altCmd.header.stamp = ros::Time::now();
-<<<<<<< HEAD
         attCmd.roll = getAxis(joy, axes.x);
         if (!invertX) {
             attCmd.roll = -1.0*attCmd.roll;
@@ -227,11 +205,7 @@ namespace reef_teleop {
         if (!invertX) {
             attCmd.yaw_rate = -1.0*attCmd.yaw_rate;
         }
-=======
-        attCmd.roll = -1.0*getAxis(joy, axes.x);
-        attCmd.pitch = -1.0*getAxis(joy, axes.y);
-        attCmd.yaw_rate = -1.0*getAxis(joy, axes.yaw);
->>>>>>> d6e757694bff8059abeeb42c9ff1fb61b70d48a2
+
         attitude_publisher_.publish(attCmd);
 
         //Populate and publish altitude command
@@ -267,7 +241,6 @@ namespace reef_teleop {
         altitude_publisher_.publish(altCmd);
     }
 
-<<<<<<< HEAD
     void Teleop::joyXBtnAttAltCallback(const sensor_msgs::JoyConstPtr &joy) {
         AttitudeCommand attCmd;
         AltitudeCommand altCmd;
@@ -297,8 +270,7 @@ namespace reef_teleop {
         altitude_publisher_.publish(altCmd);
     }
 
-=======
->>>>>>> d6e757694bff8059abeeb42c9ff1fb61b70d48a2
+
     double getAxis(const sensor_msgs::JoyConstPtr &joy, const Axis &axis) {
         //Axis out of range
         if (axis.axis == 0 || std::abs(axis.axis) > joy->axes.size()) {
@@ -315,7 +287,6 @@ namespace reef_teleop {
 
         return output;
     }
-<<<<<<< HEAD
 
     bool getButton(const sensor_msgs::JoyConstPtr &joy, const int button) {
         if (button <= 0 || button > joy->buttons.size()) {
@@ -325,6 +296,5 @@ namespace reef_teleop {
 
         return joy->buttons[button - 1] > 0;
     }
-=======
->>>>>>> d6e757694bff8059abeeb42c9ff1fb61b70d48a2
+
 }

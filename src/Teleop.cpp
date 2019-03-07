@@ -59,6 +59,7 @@ void Teleop::joyCallback(const sensor_msgs::JoyConstPtr &joy) {
     } else if (zCommand > zCommandMax) {
         zCommand = zCommandMax;
     }
+    desired_state_msg.pose.z = zCommand;
 
     if (control_mode == "attitude_altitude") {
 
@@ -72,14 +73,13 @@ void Teleop::joyCallback(const sensor_msgs::JoyConstPtr &joy) {
         if (!invertX) {
             desired_state_msg.attitude.yaw = -1.0*desired_state_msg.attitude.yaw;
         }
-        desired_state_msg.attitude.z = zCommand;
+
     }
     else if (control_mode == "velocity_altitude") {
         desired_state_msg.velocity_valid = true;
         desired_state_msg.velocity.x = getAxis(joy, axes.y);
         desired_state_msg.velocity.y = -1.0*getAxis(joy, axes.x);
         desired_state_msg.velocity.yaw = -1.0*getAxis(joy, axes.yaw);
-        desired_state_msg.velocity.z = zCommand;
     }
     desired_state_publisher_.publish(desired_state_msg);
 }

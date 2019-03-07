@@ -9,7 +9,7 @@
         <param name="coalesce_interval" value="0.01" />
     </node>
 
-    <arg name="control_mode" default="attitude_altitude"/>
+    <arg name="control_mode" default="velocity_altitude"/>
 
     <arg name="thrust_max" default="0.25"/>
     <arg name="pitch_max" default="0.25"/>

@@ -19,7 +19,7 @@
     <arg name="x_dot_max" default="0.25"/>
     <arg name="y_dot_max" default="0.25"/>
 
-    <arg name="initial_z_cmd" default="0"/>
+    <arg name="initial_z_cmd" default="-1.0"/>
     <arg name="min_z_cmd" default="-10.0"/>
     <arg name="max_z_cmd" default="10.0"/>
     <arg name="z_scale" default="0.1"/>
@@ -31,8 +31,8 @@
             control_mode: $(arg control_mode)
 
             invert_x: $(arg invert_x)
-            x_axis: 4
-            y_axis: 5
+            x_axis: 3
+            y_axis: 4
             z_axis: 2
             thrust_axis: 2
             yaw_axis: 1

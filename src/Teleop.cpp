@@ -81,6 +81,10 @@ void Teleop::joyCallback(const sensor_msgs::JoyConstPtr &joy) {
         desired_state_msg.velocity.y = -1.0*getAxis(joy, axes.x);
         desired_state_msg.velocity.yaw = -1.0*getAxis(joy, axes.yaw);
     }
+    else if (control_mode == "altitude_hold")
+        desired_state_msg.altitude_only = true;
+
+
     desired_state_publisher_.publish(desired_state_msg);
 }
 

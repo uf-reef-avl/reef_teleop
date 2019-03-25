@@ -1,12 +1,13 @@
 # REEF Teleop
-The REEF Teleop package provides ROS [joy](http://wiki.ros.org/joy) controller remappings designed specifically for teleoperation of the REEF Controller package. It was modeled after the [hector_quadrotor_teleop](http://wiki.ros.org/hector_quadrotor_teleop) package.
+The REEF Teleop package provides ROS [joy](http://wiki.ros.org/joy) controller remappings designed specifically for teleoperation of the [REEF Control](http://192.168.1.101/AVL-Summer-18/reef_control) package. It was modeled after the [hector_quadrotor_teleop](http://wiki.ros.org/hector_quadrotor_teleop) package.
 
 ## Prerequisites
-Only requires [ROS Kinetic](http://wiki.ros.org/kinetic/Installation) to be installed.
+Requires [ROS Kinetic](http://wiki.ros.org/kinetic/Installation) to be installed along with the [Joy](http://wiki.ros.org/joy) package.
 
 ## Installation
 Simply clone **reef_teleop** to the catkin workspace src directory and compile it to make sure everything works.
 ```
+sudo apt-get install ros-<distro>-joy
 cd catkin_ws/src
 git clone http://192.168.1.101/AVL-Summer-18/reef_teleop
 cd ../ && catkin_make
@@ -41,7 +42,7 @@ REEF Teleop is designed to allow the construction of launchfile profiles for dif
 
 ### Control Modes
 
-Currently, REEF Teleop only supports two control modes, but adding and mapping new modes into the code is quite simple and requires only an extra if statement and callback for the new mode.
+Currently, REEF Teleop supports the follwoing control modes:
 
  - **Attitude + Altitude**
 Publishes pitch and roll attitude, yawrate, and altitude setpoints. A change on the controller z axis corresponds to a proportional change in the altitude setpoint governed by the **z_scale** multiplier parameter. To enable this mode, set the **control_mode** parameter to "attitude_altitude".
@@ -49,32 +50,21 @@ Publishes pitch and roll attitude, yawrate, and altitude setpoints. A change on 
  - **Velocity + Altitude**
 Publishes x and y velocity, yawrate, and altitude setpoints. Altitude functions the same as with Attitude + Altitude mode. To enable this mode, set the **control_mode** parameter to "velocity_altitude".
 
+ - **Altitude Only**
+Publishes only the altitude setpoint. 
+
 ### ROS Topics and Messages
 
-#### Internal Message Types
- - **AltitudeCommand**
-	 - **z**: altitude in meters (float64)
- - **AttitudeCommand**
-	 - **roll**: roll command in radians (float64)
-	 - **pitch**: pitch command in radians (float64)
-	 - **yaw_rate**: yaw rate in radians/second (float64)
- - **VelocityCommand**
-	 - **x_dot**: x velocity in meters/second (float64)
-	 - **y_dot**: y velocity in meters/second (float64)
-	 - **yaw_rate**: yaw rate in radians/second (float64)
-	 
 #### Subscribed Topics
 |Topic Name|Message Type|Description|
 |--|--|--|
 |joy|sensor_msgs::Joy|Joy controller data stream|
-|rc_raw|rosflight_msgs::RCRaw|ROSFlight raw RC data|
 
 #### Published Topics
 |Topic Name|Message Type|Description|
 |--|--|--|
-|teleop_command/altitude|reef_teleop::AltitudeCommand|Altitude command topic|
-|teleop_command/attitude|reef_teleop::AttitudeCommand|Attitude command topic|
-|teleop_command/velocity|reef_teleop::VelocityCommand|Velocity command topic|
+|desired_state|reef_msgs::DesiredState|Contains desired state|
+
 
 ### Launchfile Examples
 Example launchfile for XBox One bluetooth controller:

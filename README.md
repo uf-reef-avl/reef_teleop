@@ -2,11 +2,11 @@
 The REEF Teleop package provides ROS [joy](http://wiki.ros.org/joy) controller remappings designed specifically for teleoperation of the [REEF Control](http://192.168.1.101/AVL-Summer-18/reef_control) package. It was modeled after the [hector_quadrotor_teleop](http://wiki.ros.org/hector_quadrotor_teleop) package.
 
 ## Prerequisites
-Requires [ROS Kinetic](http://wiki.ros.org/kinetic/Installation) to be installed along with the [Joy](http://wiki.ros.org/joy) package.
+Requires [ROS Kinetic](http://wiki.ros.org/kinetic/Installation) to be installed along with the [joy](http://wiki.ros.org/joy) package.
 
 ## Installation
 Simply clone **reef_teleop** to the catkin workspace src directory and compile it to make sure everything works.
-```
+```xml
 sudo apt-get install ros-<distro>-joy
 cd catkin_ws/src
 git clone http://192.168.1.101/AVL-Summer-18/reef_teleop

@@ -6,7 +6,7 @@ Requires [ROS Kinetic](http://wiki.ros.org/kinetic/Installation) to be installed
 
 ## Installation
 Simply clone **reef_teleop** to the catkin workspace src directory and compile it to make sure everything works.
-```xml
+```
 sudo apt-get install ros-<distro>-joy
 cd catkin_ws/src
 git clone http://192.168.1.101/AVL-Summer-18/reef_teleop
@@ -51,7 +51,7 @@ Publishes pitch and roll attitude, yawrate, and altitude setpoints. A change on 
 Publishes x and y velocity, yawrate, and altitude setpoints. Altitude functions the same as with Attitude + Altitude mode. To enable this mode, set the **control_mode** parameter to "velocity_altitude".
 
  - **Altitude Only**
-Publishes only the altitude setpoint. 
+Publishes only the altitude setpoint. To enable this mode, set the **control_mode** parameter to "altitude_only".
 
 ### ROS Topics and Messages
 

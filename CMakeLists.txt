@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
     rospy
     sensor_msgs
     reef_msgs
+    rosflight_msgs
 )
 
 catkin_package(

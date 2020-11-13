@@ -1,0 +1,92 @@
+<launch>
+
+    <arg name="vehicle"        default="wren"/>    <!-- name of the vehicle, determines which sets of parameters and gains to load -->
+    <arg name="run_rgbd"       default="false"/>  <!-- run the RGB-D camera driver and visual odometry -->
+    <arg name="run_controller" default="true"/> <!-- run the velocity controller -->
+    <arg name="run_backend" default="true"/>
+    <arg name="truth_input" default="true"/>
+    <arg name="record_bag" default="false"/>
+    <arg name="bag_name"        default="test"/>
+
+    <node pkg="ros_vrpn_client" name="$(arg vehicle)" type="ros_vrpn_client" args="_vrpn_server_ip:=192.168.1.104" required="true" output="screen">
+        <remap from="$(arg vehicle)/ned/pose_stamped" to="$(arg vehicle)/pose_stamped"/>
+    </node>
+    <rosparam command="load" file="$(find dubins_path)/param/global_param.yaml" />
+    <group ns="$(arg vehicle)">
+
+        <!-- loads the vehicle parameters -->
+        <rosparam command="load" file="$(find relative_nav)/param/$(arg vehicle).yaml"/>
+
+        <!-- rosflight_io interface -->
+        <node name="rosflight" pkg="rosflight" type="rosflight_io" output="screen">
+            <param name="port" value="/dev/ttyUSB0"/>
+        </node>
+        <group if="$(arg run_controller)">
+            <arg name="vehicle_type" default="quad"/>
+            <arg name="control_mode" value="position_yawrate"/>
+            <include file="$(find reef_teleop)/launch/logitech_controller.launch">-->
+                <arg name="control_mode" value="$(arg control_mode)"/>
+                <arg name="initial_x_pose" value="0.0"/>
+                <arg name="initial_y_pose" value="0.0"/>
+                <arg name="initial_z_cmd" value="-1.0"/>
+                <arg name="min_z_cmd" value="-3.0"/>
+                <arg name="max_z_cmd" value="0.0"/>
+                <arg name="invert_x" value="false"/>
+                <arg name="x_dot_max" default="1.00"/>
+                <arg name="y_dot_max" default="1.00"/>
+                <arg name="yawrate_max" default="1.57"/>
+            </include>
+
+            <rosparam file="$(find reef_adaptive_control)/params/$(arg vehicle_type)_pid.yaml" />
+            <node name="reef_control_pid" pkg="reef_adaptive_control" type="pid_control_node" output="screen"/>
+            <node name="reef_control_adaptive" pkg="reef_adaptive_control" type="adaptive_node" output="screen">
+                <rosparam file="$(find reef_adaptive_control)/params/adaptive_gains.yaml"/>
+            </node>
+        </group>
+
+        <arg name="vo_name"                       default="vo_1"/>
+        <arg name="sync_with_vo_in"               default="false"/>
+        <arg name="vo_in"                         default="vo_update"/>
+        <arg name="max_translation"               default="0.25"/>
+        <arg name="max_yaw"                       default="0.35"/>
+        <arg name="vo_out_rate"                   default="30"/>
+
+        <node pkg="vo_sim" name="$(arg vo_name)_node" type="vo_sim_node" output="screen">
+            <remap from="vo_out" to="$(arg vo_name)" />
+            <remap from="altimeter" to="sonar" />
+            <remap from="truth" to="pose_stamped" />
+            <param name="sync_with_vo_in" value="$(arg sync_with_vo_in)"/>
+            <param name="vo_out_rate"     value="$(arg vo_out_rate)"/>
+            <param name="sensor"          value="xtion"/>
+            <param name="max_translation" value="$(arg max_translation)"/>
+            <param name="max_yaw"         value="$(arg max_yaw)"/>
+        </node>
+
+        <!-- informs the estimator when the vehicle has actually lifted off -->
+        <node name="start_trigger" pkg="rmekf" type="start_trigger.py"/>
+
+        <!-- the estimator -->
+        <node name="rmekf"         pkg="rmekf" type="rmekf_node" output="screen">
+            <rosparam command="load" file="$(find rmekf)/params/estimator.yaml"/>
+            <remap from="altimeter" to="sonar"/>
+            <remap if="$(arg run_rgbd)" from="vo" to="/vo"/>
+            <remap unless="$(arg run_rgbd)" from="vo" to="vo_1"/>
+        </node>
+
+        <node name="relative_truth" pkg="rotor_estimator" type="truth" output="log">
+            <remap from="mocap" to="mocap"/> <!-- TODO you will need to fill in this topic value, should be truth in NED -->
+            <remap if="$(arg run_rgbd)" from="vo" to="/vo"/>
+            <remap unless="$(arg run_rgbd)" from="vo" to="vo_1"/>
+            <remap from="relative_state" to="truth/relative_state"/>
+            <remap from="edge" to="truth/edge"/>
+            <remap from="node" to="truth/node"/>
+            <remap from="is_flying" to="truth/is_flying"/>
+            <param name="remove_offset" value="true"/>
+            <param name="relative" value="true"/>
+            <param name="add_noise" value="true"/>
+            <param name="mocap_noise_std" value="0.1"/>
+            <param name="use_vo_keyframes" value="true"/>
+        </node>
+
+    </group>
+</launch>

@@ -20,6 +20,8 @@ Teleop::Teleop() : private_nh_("~") {
     private_nh_.param<double>("max_z_cmd", zCommandMax, 10.0);
     private_nh_.param<double>("z_scale", zScale, 0.1);
     private_nh_.param<bool>("invert_x", invertX, false);
+    private_nh_.param<double>("initial_x_pose", atr_x, 0.0);
+    private_nh_.param<double>("initial_y_pose", atr_y, 0.0);
 
     private_nh_.param<double>("yawrate_max", axes.yaw.max, 0.5);
     //Set zmax (speed at which position changes)
@@ -83,6 +85,13 @@ void Teleop::joyCallback(const sensor_msgs::JoyConstPtr &joy) {
     }
     else if (control_mode == "altitude_hold")
         desired_state_msg.altitude_only = true;
+
+    else if (control_mode == "position_yawrate"){
+        desired_state_msg.position_valid = true;
+        desired_state_msg.pose.x = atr_x;
+        desired_state_msg.pose.y = atr_y;
+        desired_state_msg.velocity.yaw = -1.0*getAxis(joy, axes.yaw);;
+    }
 
 
     desired_state_publisher_.publish(desired_state_msg);

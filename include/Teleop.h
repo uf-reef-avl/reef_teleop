@@ -44,6 +44,7 @@ namespace reef_teleop {
         bool rcSwitchFlipped;
         int rcChannel;
         std::string control_mode;
+        double atr_x, atr_y;
 
     public:
         Teleop();

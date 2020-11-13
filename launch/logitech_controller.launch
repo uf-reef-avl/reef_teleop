@@ -19,6 +19,8 @@
     <arg name="x_dot_max" default="0.25"/>
     <arg name="y_dot_max" default="0.25"/>
 
+    <arg name="initial_x_cmd" default="0.0"/>
+    <arg name="initial_y_cmd" default="0.0"/>
     <arg name="initial_z_cmd" default="-1.0"/>
     <arg name="min_z_cmd" default="-10.0"/>
     <arg name="max_z_cmd" default="10.0"/>
@@ -37,6 +39,8 @@
             thrust_axis: 2
             yaw_axis: 1
 
+            initial_x_pose: $(arg initial_x_cmd)
+            initial_y_pose: $(arg initial_y_cmd)
             initial_z_cmd: $(arg initial_z_cmd)
             min_z_cmd: $(arg min_z_cmd)
             max_z_cmd: $(arg max_z_cmd)

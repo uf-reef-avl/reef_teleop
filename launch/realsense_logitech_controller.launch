@@ -51,4 +51,11 @@
             y_dot_max: $(arg y_dot_max)
         </rosparam>
     </node>
+
+    <include file="$(find aruco_ros)/launch/realsense_single.launch"/>
+
+    <node name="rosflight" pkg="rosflight" type="rosflight_io" output="screen">
+        <param name="port" value="/dev/ttyUSB0"/>
+    </node>
+
 </launch>
